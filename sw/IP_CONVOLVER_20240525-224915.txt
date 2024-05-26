@@ -1,0 +1,121 @@
+#include "caip.h"
+
+#include <stdint.h>
+#include <stdio.h>
+
+#include <conio.h>
+
+int main(){
+    const char *connector = "/dev/ttyACM0";
+    uint8_t nic_addr = 1;
+    uint8_t port = 0;
+    const char *csv_file = "/home/dani/Desktop/AIP_Generated/ID1000500C_config.csv";
+
+    caip_t *aip = caip_init(connector, nic_addr, port, csv_file);
+
+    aip->reset();
+
+    /========================================/
+    /* Code generated with IPAccelerator */
+
+    uint32_t ID[1];
+
+
+    aip->getID(ID);
+    printf("Read ID: %08X\n\n", ID[0]);
+
+
+    uint32_t STATUS[1];
+
+
+    aip->getStatus(STATUS);
+    printf("Read STATUS: %08X\n\n", STATUS[0]);
+
+
+    uint32_t CONF_REG[1] = {0x00000545};
+    uint32_t CONF_REG_size = sizeof(CONF_REG) / sizeof(uint32_t);
+
+
+    printf("Write configuration register: CCONF_REG\n");
+    aip->writeConfReg("CCONF_REG", CONF_REG, 1, 0);
+    printf("CONF_REG Data: [");
+    for(int i=0; i<CONF_REG_size; i++){
+        printf("0x%08X", CONF_REG[i]);
+        if(i != CONF_REG_size-1){
+            printf(", ");
+        }
+    }
+    printf("]\n\n");
+
+
+    uint32_t MEM_X[5] = {0x00000009, 0x00000002, 0x00000004, 0x00000001, 0x0000000A};
+    uint32_t MEM_X_size = sizeof(MEM_X) / sizeof(uint32_t);
+
+
+    printf("Write memory: MMEM_X\n");
+    aip->writeMem("MMEM_X", MEM_X, 5, 0);
+    printf("MEM_X Data: [");
+    for(int i=0; i<MEM_X_size; i++){
+        printf("0x%08X", MEM_X[i]);
+        if(i != MEM_X_size-1){
+            printf(", ");
+        }
+    }
+    printf("]\n\n");
+
+
+    uint32_t MEM_Y[10] = {0x00000008, 0x00000008, 0x00000002, 0x00000004, 0x00000002, 0x00000005, 0x00000009, 0x00000007, 0x00000007, 0x00000007};
+    uint32_t MEM_Y_size = sizeof(MEM_Y) / sizeof(uint32_t);
+
+
+    printf("Write memory: MMEM_Y\n");
+    aip->writeMem("MMEM_Y", MEM_Y, 10, 0);
+    printf("MEM_Y Data: [");
+    for(int i=0; i<MEM_Y_size; i++){
+        printf("0x%08X", MEM_Y[i]);
+        if(i != MEM_Y_size-1){
+            printf(", ");
+        }
+    }
+    printf("]\n\n");
+
+
+    printf("Start IP\n\n");
+    aip->start();
+
+
+    aip->getStatus(STATUS);
+    printf("Read STATUS: %08X\n\n", STATUS[0]);
+
+
+    uint32_t MEM_Z[14];
+    uint32_t MEM_Z_size = sizeof(MEM_Z) / sizeof(uint32_t);
+
+
+    printf("Read memory: MMEM_Z\n");
+    aip->readMem("MMEM_Z", MEM_Z, 14, 0);
+    printf("MEM_Z Data: [");
+    for(int i=0; i<MEM_Z_size; i++){
+        printf("0x%08X", MEM_Z[i]);
+        if(i != MEM_Z_size-1){
+            printf(", ");
+        }
+    }
+    printf("]\n\n");
+
+
+    printf("Clear INT: 0\n");
+    aip->clearINT(0);
+
+
+
+    /========================================/
+
+    aip->finish();
+
+    printf("\n\nPress key to close ... ");
+    getch();
+
+    return 0;
+
+}
